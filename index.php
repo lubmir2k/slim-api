@@ -15,18 +15,20 @@ $config = ['settings' => ['displayErrorDetails' => true]]; $app = new Slim\App($
 //$app->add(new ChatterAuth());
 $app->add(new ChatterLogging());
 
-$app->group('/messages', function() {
-	$this->map(['GET'], '', function($request, $response, $args) {
-		
-		$_message = new Message();
-		$messages = $_message->all();
-		$payload = [];
-		foreach($messages as $message) {
-			$payload[$message->id] = $message->output();
-		}
-		return $response->withStatus(200)->withJson($payload);
+$app->group('/v1', function() {
+	$app->group('/messages', function() {
+		$this->map(['GET'], '', function($request, $response, $args) {
+			
+			$_message = new Message();
+			$messages = $_message->all();
+			$payload = [];
+			foreach($messages as $message) {
+				$payload[$message->id] = $message->output();
+			}
+			return $response->withStatus(200)->withJson($payload);
 
-	})->setName('get_messages');
+		})->setName('get_messages');
+	});
 });
 
 $filter = new FileFilter();

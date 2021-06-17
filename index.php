@@ -21,9 +21,15 @@ $app->get('/messages', function($request, $response, $args) {
 	$payload = [];
 	foreach($messages as $message)
 	{
-		$payload[$message->id] = ['body' => $message->body,
+		$payload[$message->id] = [
+			'body' => $message->body,
 			'user_id' => $message->user_id,
-			'created_at' => $message->created_at];
+			'user_uri' => '/user/' . $message->user_id,
+			'created_at' => $message->created_at,
+			'image_url' => $message->image_url,
+			'message_id' => $message->id,
+			'message_uri' => '/messages/' . $message->id
+			];
 	}
 	return $response->withStatus(200)->withJson($payload);
 });
@@ -40,12 +46,13 @@ $app->post('/messages', function($request, $response, $args) {
 	$message = new Message();
 	$message->body = $_message;
 	$message->user_id = -1;
-	$message->image_url = $imagepath;
+	$message->image_url = $request->getAttribute('png_filename');
 	$message->save();
 	
 	if($message->id) {
 		$payload = ['message_id' => $message->id,
-					'message_uri' => '/messages/' . $message->id];
+					'message_uri' => '/messages/' . $message->id,
+					'image_url' => $message->image_url];
 		return $response->withStatus(201)->withJson($payload);
 	} else {
 		return $response->withStatus(400);

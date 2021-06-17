@@ -18,6 +18,7 @@ class ImageRemoveExif
 			imagepng($_img, $pngfile);
 		}
 		
+		$request->withAttribute('png_filename', $pngfile);
 		$response = $next($request, $response);
 		return $response;
 	}
